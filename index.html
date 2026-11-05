@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#10131b">
 <title>AVITO PRICE BOT — калькулятор цен</title>
 <style>
+.tabs{display:flex;gap:9px;margin:0 0 18px;padding:5px;background:#111722;border:1px solid var(--line);border-radius:13px}.tab{flex:1;border:0;border-radius:9px;padding:11px;background:transparent;color:var(--muted);font:inherit;font-weight:700;cursor:pointer}.tab.active{background:#24342f;color:var(--accent)}.tab-page[hidden]{display:none}.recommend-result{background:#0e1715;border:1px solid #28513e;border-radius:14px;padding:18px;margin:16px 0}.recommend-price{font-size:clamp(30px,5vw,42px);font-weight:800;color:var(--accent);letter-spacing:-1px;margin:5px 0}.recommend-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.recommend-grid .field{margin:0}.recommend-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}@media(max-width:700px){.recommend-grid{grid-template-columns:1fr}}
 :root{color-scheme:dark;--bg:#0c0f15;--panel:#151a24;--panel2:#1b2230;--line:#2a3343;--muted:#929daf;--text:#f4f6fb;--accent:#78e0ad;--accent2:#38bd82}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#1c2d2b 0,transparent 45%),var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;padding:36px 16px}
 main{max-width:900px;margin:0 auto}.top{display:flex;align-items:center;gap:12px;margin-bottom:28px}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(145deg,#a1f1c8,#2d9c70);display:grid;place-items:center;color:#082016;font-weight:900;font-size:20px;box-shadow:0 8px 30px #38bd8230}.eyebrow{color:var(--accent);font-size:11px;letter-spacing:2px;font-weight:800}.top h1{font-size:19px;margin:0;letter-spacing:.2px}.intro{margin:0 0 22px;color:var(--muted)}.layout{display:grid;grid-template-columns:1fr 1fr;gap:18px}.panel{background:linear-gradient(180deg,#171d28,#121720);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 18px 55px #0003}.panel h2{font-size:16px;margin:0 0 18px}.field{display:block;margin:0 0 16px}.field span{display:block;font-size:13px;color:#c4ccda;margin-bottom:7px}.field input{width:100%;background:#0d121a;border:1px solid #354052;border-radius:10px;padding:13px 14px;color:white;font:inherit;outline:none}.field input:focus{border-color:var(--accent2);box-shadow:0 0 0 3px #38bd8220}.hint{font-size:12px;color:var(--muted);margin-top:6px}.options{display:grid;gap:9px}.option{display:flex;align-items:flex-start;gap:11px;padding:12px;border:1px solid var(--line);background:#101620;border-radius:12px;cursor:pointer;transition:.15s}.option:has(input:checked){border-color:var(--accent2);background:#14251f}.option input{accent-color:var(--accent2);margin-top:4px}.option b{display:block;font-size:13px}.option small{display:block;color:var(--muted);font-size:12px;margin-top:2px}.result{display:flex;flex-direction:column;min-height:100%}.result-main{background:#0e1715;border:1px solid #28513e;border-radius:14px;padding:17px;margin-bottom:14px}.result-label{font-size:12px;color:#a5b9ae}.price{font-size:clamp(30px,5vw,42px);font-weight:800;letter-spacing:-1.5px;margin:4px 0;color:var(--accent);overflow-wrap:anywhere}.breakdown{display:grid;gap:0;margin:3px 0 16px}.line{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #28303d;font-size:13px}.line span:first-child{color:var(--muted)}.line strong{text-align:right}.note{font-size:12px;color:var(--muted);margin-top:auto;padding-top:12px}.actions{display:flex;gap:9px;margin-top:12px}.btn{border:0;border-radius:10px;padding:12px 15px;font:inherit;font-weight:700;cursor:pointer}.primary{background:var(--accent);color:#092016;flex:1}.secondary{background:#252e3c;color:#e9edf5}.btn:hover{filter:brightness(1.07)}.footer{text-align:center;color:#687386;font-size:11px;margin-top:24px}@media(max-width:700px){body{padding:22px 13px}.layout{grid-template-columns:1fr}.panel{padding:18px}.result{min-height:350px}}
@@ -15,6 +16,8 @@ main{max-width:900px;margin:0 auto}.top{display:flex;align-items:center;gap:12px
 <main>
 <header class="top"><div class="logo">₽</div><div><div class="eyebrow">AVITO PRICE BOT</div><h1>Калькулятор стоимости</h1></div></header>
 <p class="intro">Рассчитайте цену товара для разных способов оплаты и получения.</p>
+<nav class="tabs"><button class="tab active" id="tabPaymentBtn" type="button">Расчёт оплаты</button><button class="tab" id="tabMarketBtn" type="button">Рекомендованная цена</button></nav>
+<div class="tab-page" id="tabPayment">
 <div class="layout">
 <section class="panel">
 <h2>1. Данные товара</h2>
@@ -37,6 +40,22 @@ main{max-width:900px;margin:0 auto}.top{display:flex;align-items:center;gap:12px
 <p class="note">Расчёт использует заданные наценки: 15% для безналичной оплаты и дополнительные 11% для Авито Доставки. Фактические тарифы площадки могут отличаться.</p>
 </section>
 </div>
+</div>
+<section class="panel tab-page" id="tabMarket" hidden>
+<h2>Расчёт рыночной цены</h2>
+<p class="intro" style="margin-top:-8px">Сравните цены конкурентов и рассчитайте цену с учётом закупки и минимальной прибыли.</p>
+<div class="recommend-grid">
+<label class="field"><span>Минимальная цена конкурентов, ₽</span><input id="marketMin" type="number" min="0" step="1" placeholder="Например, 31 000"></label>
+<label class="field"><span>Средняя цена конкурентов, ₽</span><input id="marketAvg" type="number" min="0" step="1" placeholder="Например, 33 000"></label>
+<label class="field"><span>Максимальная цена конкурентов, ₽</span><input id="marketMax" type="number" min="0" step="1" placeholder="Например, 35 000"></label>
+<label class="field"><span>Закупочная цена товара, ₽</span><input id="costPrice" type="number" min="0" step="1" placeholder="Например, 28 000"></label>
+<label class="field"><span>Минимальная желаемая прибыль, ₽</span><input id="minProfit" type="number" min="0" step="1" placeholder="Например, 2 000"></label>
+</div>
+<div class="recommend-result"><div class="result-label">Рекомендованная цена объявления</div><div class="recommend-price" id="recommendedPrice">— ₽</div><div class="result-label" id="recommendHint">Заполните среднюю цену конкурентов, закупку и желаемую прибыль</div></div>
+<div class="breakdown" id="recommendBreakdown"><div class="line"><span>Ожидает ввода</span><strong>—</strong></div></div>
+<div class="recommend-actions"><button class="btn primary" id="useRecommended" type="button" disabled>Перенести цену в расчёт оплаты</button><button class="btn secondary" id="clearMarket" type="button">Очистить поля</button></div>
+<p class="note">Базовая рекомендация — примерно на 1% ниже средней цены конкурентов. Если такая цена не покрывает закупку и минимальную прибыль, рекомендация повышается до необходимого уровня.</p>
+</section>
 <div class="footer">AVITO PRICE BOT · Внутренний калькулятор</div>
 </main>
 <script>
@@ -70,6 +89,38 @@ document.querySelectorAll('input[name="scenario"]').forEach(el=>el.addEventListe
 $('copy').addEventListener('click',async()=>{if(!lastText){$('base').focus();return}try{await navigator.clipboard.writeText(lastText);$('copy').textContent='Скопировано!';setTimeout(()=>$('copy').textContent='Скопировать расчёт',1500)}catch(e){$('copy').textContent='Не удалось скопировать';}});
 $('reset').addEventListener('click',()=>{$('product').value='';$('base').value='';$('delivery').value='';document.querySelector('input[value="cashPickup"]').checked=true;calculate();});
 calculate();
+let recommendedValue=null;
+function calculateRecommended(){
+ const min=Number($('marketMin').value)||0,avg=Number($('marketAvg').value)||0,max=Number($('marketMax').value)||0;
+ const cost=Number($('costPrice').value)||0,profit=Number($('minProfit').value)||0;
+ if(avg<=0||cost<=0||$('marketAvg').value===''||$('costPrice').value===''){
+  $('recommendedPrice').textContent='— ₽';$('recommendHint').textContent='Укажите среднюю цену конкурентов и закупочную цену';
+  $('recommendBreakdown').innerHTML='<div class="line"><span>Ожидает ввода</span><strong>—</strong></div>';
+  $('useRecommended').disabled=true;recommendedValue=null;return;
+ }
+ const marketTarget=avg*0.99,minimumTarget=cost+profit;
+ recommendedValue=Math.ceil(Math.max(marketTarget,minimumTarget));
+ const raised=minimumTarget>marketTarget;
+ $('recommendedPrice').textContent=money(recommendedValue);
+ $('recommendHint').textContent=raised?'Цена повышена, чтобы сохранить закупку и минимальную прибыль':'Цена примерно на 1% ниже средней цены конкурентов';
+ const rows=[['Средняя цена конкурентов',money(avg)],['Цена на 1% ниже средней',money(marketTarget)],['Закупочная цена',money(cost)],['Минимальная желаемая прибыль',money(profit)],['Минимальная цена без убытка',money(minimumTarget)]];
+ if(min>0)rows.unshift(['Минимальная цена конкурентов',money(min)]);
+ if(max>0)rows.unshift(['Максимальная цена конкурентов',money(max)]);
+ rows.push(['Рекомендованная цена',money(recommendedValue)]);
+ $('recommendBreakdown').innerHTML=rows.map(r=>'<div class="line"><span>'+r[0]+'</span><strong>'+r[1]+'</strong></div>').join('');
+ $('useRecommended').disabled=false;
+}
+['marketMin','marketAvg','marketMax','costPrice','minProfit'].forEach(id=>$(id).addEventListener('input',calculateRecommended));
+function showTab(which){
+ const payment=which==='payment';
+ $('tabPayment').hidden=!payment;$('tabMarket').hidden=payment;
+ $('tabPaymentBtn').classList.toggle('active',payment);$('tabMarketBtn').classList.toggle('active',!payment);
+}
+$('tabPaymentBtn').addEventListener('click',()=>showTab('payment'));
+$('tabMarketBtn').addEventListener('click',()=>showTab('market'));
+$('useRecommended').addEventListener('click',()=>{if(recommendedValue===null)return;$('base').value=String(recommendedValue);calculate();showTab('payment');});
+$('clearMarket').addEventListener('click',()=>{['marketMin','marketAvg','marketMax','costPrice','minProfit'].forEach(id=>$(id).value='');calculateRecommended();});
+calculateRecommended();
 </script>
 </body>
 </html>
