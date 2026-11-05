@@ -44,6 +44,7 @@ main{max-width:900px;margin:0 auto}.top{display:flex;align-items:center;gap:12px
 <section class="panel tab-page" id="tabMarket" hidden>
 <h2>Расчёт рыночной цены</h2>
 <p class="intro" style="margin-top:-8px">Сравните цены конкурентов и рассчитайте цену с учётом закупки и минимальной прибыли.</p>
+<label class="field"><span>Название товара</span><input id="marketProductName" type="text" placeholder="Например, Samsung Galaxy S26 FE 8/128 GB"></label>
 <div class="recommend-grid">
 <label class="field"><span>Минимальная цена конкурентов, ₽</span><input id="marketMin" type="number" min="0" step="1" placeholder="Например, 31 000"></label>
 <label class="field"><span>Средняя цена конкурентов, ₽</span><input id="marketAvg" type="number" min="0" step="1" placeholder="Например, 33 000"></label>
@@ -85,6 +86,8 @@ function calculate(){
  lastText=['AVITO PRICE BOT',name||'Товар',...rows.map(r=>r[0]+': '+r[1]),label+': '+money(total)].join('\n');
 }
 ['product','base','delivery'].forEach(id=>$(id).addEventListener('input',calculate));
+$('product').addEventListener('input',()=>{$('marketProductName').value=$('product').value;});
+$('marketProductName').addEventListener('input',()=>{$('product').value=$('marketProductName').value;calculate();});
 document.querySelectorAll('input[name="scenario"]').forEach(el=>el.addEventListener('change',calculate));
 $('copy').addEventListener('click',async()=>{if(!lastText){$('base').focus();return}try{await navigator.clipboard.writeText(lastText);$('copy').textContent='Скопировано!';setTimeout(()=>$('copy').textContent='Скопировать расчёт',1500)}catch(e){$('copy').textContent='Не удалось скопировать';}});
 $('reset').addEventListener('click',()=>{$('product').value='';$('base').value='';$('delivery').value='';document.querySelector('input[value="cashPickup"]').checked=true;calculate();});
@@ -118,8 +121,8 @@ function showTab(which){
 }
 $('tabPaymentBtn').addEventListener('click',()=>showTab('payment'));
 $('tabMarketBtn').addEventListener('click',()=>showTab('market'));
-$('useRecommended').addEventListener('click',()=>{if(recommendedValue===null)return;$('base').value=String(recommendedValue);calculate();showTab('payment');});
-$('clearMarket').addEventListener('click',()=>{['marketMin','marketAvg','marketMax','costPrice','minProfit'].forEach(id=>$(id).value='');calculateRecommended();});
+$('useRecommended').addEventListener('click',()=>{if(recommendedValue===null)return;$('product').value=$('marketProductName').value.trim();$('base').value=String(recommendedValue);calculate();showTab('payment');});
+$('clearMarket').addEventListener('click',()=>{['marketProductName','marketMin','marketAvg','marketMax','costPrice','minProfit'].forEach(id=>$(id).value='');$('product').value='';calculate();calculateRecommended();});
 calculateRecommended();
 </script>
 </body>
