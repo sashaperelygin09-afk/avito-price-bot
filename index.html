@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10131b">
+<title>AVITO PRICE BOT — калькулятор цен</title>
+<style>
+:root{color-scheme:dark;--bg:#0c0f15;--panel:#151a24;--panel2:#1b2230;--line:#2a3343;--muted:#929daf;--text:#f4f6fb;--accent:#78e0ad;--accent2:#38bd82}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#1c2d2b 0,transparent 45%),var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;padding:36px 16px}
+main{max-width:900px;margin:0 auto}.top{display:flex;align-items:center;gap:12px;margin-bottom:28px}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(145deg,#a1f1c8,#2d9c70);display:grid;place-items:center;color:#082016;font-weight:900;font-size:20px;box-shadow:0 8px 30px #38bd8230}.eyebrow{color:var(--accent);font-size:11px;letter-spacing:2px;font-weight:800}.top h1{font-size:19px;margin:0;letter-spacing:.2px}.intro{margin:0 0 22px;color:var(--muted)}.layout{display:grid;grid-template-columns:1fr 1fr;gap:18px}.panel{background:linear-gradient(180deg,#171d28,#121720);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 18px 55px #0003}.panel h2{font-size:16px;margin:0 0 18px}.field{display:block;margin:0 0 16px}.field span{display:block;font-size:13px;color:#c4ccda;margin-bottom:7px}.field input{width:100%;background:#0d121a;border:1px solid #354052;border-radius:10px;padding:13px 14px;color:white;font:inherit;outline:none}.field input:focus{border-color:var(--accent2);box-shadow:0 0 0 3px #38bd8220}.hint{font-size:12px;color:var(--muted);margin-top:6px}.options{display:grid;gap:9px}.option{display:flex;align-items:flex-start;gap:11px;padding:12px;border:1px solid var(--line);background:#101620;border-radius:12px;cursor:pointer;transition:.15s}.option:has(input:checked){border-color:var(--accent2);background:#14251f}.option input{accent-color:var(--accent2);margin-top:4px}.option b{display:block;font-size:13px}.option small{display:block;color:var(--muted);font-size:12px;margin-top:2px}.result{display:flex;flex-direction:column;min-height:100%}.result-main{background:#0e1715;border:1px solid #28513e;border-radius:14px;padding:17px;margin-bottom:14px}.result-label{font-size:12px;color:#a5b9ae}.price{font-size:clamp(30px,5vw,42px);font-weight:800;letter-spacing:-1.5px;margin:4px 0;color:var(--accent);overflow-wrap:anywhere}.breakdown{display:grid;gap:0;margin:3px 0 16px}.line{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #28303d;font-size:13px}.line span:first-child{color:var(--muted)}.line strong{text-align:right}.note{font-size:12px;color:var(--muted);margin-top:auto;padding-top:12px}.actions{display:flex;gap:9px;margin-top:12px}.btn{border:0;border-radius:10px;padding:12px 15px;font:inherit;font-weight:700;cursor:pointer}.primary{background:var(--accent);color:#092016;flex:1}.secondary{background:#252e3c;color:#e9edf5}.btn:hover{filter:brightness(1.07)}.footer{text-align:center;color:#687386;font-size:11px;margin-top:24px}@media(max-width:700px){body{padding:22px 13px}.layout{grid-template-columns:1fr}.panel{padding:18px}.result{min-height:350px}}
+</style>
+</head>
+<body>
+<main>
+<header class="top"><div class="logo">₽</div><div><div class="eyebrow">AVITO PRICE BOT</div><h1>Калькулятор стоимости</h1></div></header>
+<p class="intro">Рассчитайте цену товара для разных способов оплаты и получения.</p>
+<div class="layout">
+<section class="panel">
+<h2>1. Данные товара</h2>
+<label class="field"><span>Название товара</span><input id="product" placeholder="Например, Samsung Galaxy S26 FE"></label>
+<label class="field"><span>Цена объявления, ₽</span><input id="base" type="number" min="0" step="1" placeholder="44000"></label>
+<label class="field"><span>Стоимость доставки, ₽ <span style="display:inline;color:#8290a3">(необязательно)</span></span><input id="delivery" type="number" min="0" step="1" placeholder="Например, 500"></label>
+<h2 style="margin-top:22px">2. Способ оплаты и получения</h2>
+<div class="options">
+<label class="option"><input type="radio" name="scenario" value="cashPickup" checked><span><b>Наличные · Самовывоз</b><small>Цена товара без наценки</small></span></label>
+<label class="option"><input type="radio" name="scenario" value="cashDelivery"><span><b>Наличные · Доставка</b><small>Доставка оплачивается клиентом отдельно</small></span></label>
+<label class="option"><input type="radio" name="scenario" value="cashlessPickup"><span><b>Безналичная оплата · Самовывоз</b><small>Наценка 15%</small></span></label>
+<label class="option"><input type="radio" name="scenario" value="cashlessAvito"><span><b>Безналичная оплата · Авито Доставка</b><small>Сначала +15%, затем +11%</small></span></label>
+</div>
+</section>
+<section class="panel result">
+<h2>3. Результат расчёта</h2>
+<div class="result-main"><div class="result-label" id="resultLabel">Итоговая цена товара</div><div class="price" id="total">— ₽</div><div class="result-label" id="subLabel">Введите цену товара</div></div>
+<div class="breakdown" id="breakdown"><div class="line"><span>Ожидает ввода</span><strong>—</strong></div></div>
+<div class="actions"><button class="btn primary" id="copy">Скопировать расчёт</button><button class="btn secondary" id="reset" type="button">Сбросить</button></div>
+<p class="note">Расчёт использует заданные наценки: 15% для безналичной оплаты и дополнительные 11% для Авито Доставки. Фактические тарифы площадки могут отличаться.</p>
+</section>
+</div>
+<div class="footer">AVITO PRICE BOT · Внутренний калькулятор</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const money=n=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(n)+' ₽';
+let lastText='';
+function calculate(){
+ const name=$('product').value.trim();
+ const raw=$('base').value;
+ const p=Number(raw);
+ const d=Math.max(0,Number($('delivery').value)||0);
+ const scenario=document.querySelector('input[name="scenario"]:checked').value;
+ if(raw===''||!Number.isFinite(p)||p<=0){
+  $('total').textContent='— ₽';$('subLabel').textContent='Введите цену товара';
+  $('breakdown').innerHTML='<div class="line"><span>Ожидает ввода</span><strong>—</strong></div>';lastText='';return;
+ }
+ let total=p,rows=[],label='Итоговая цена товара',sub='Цена товара для клиента';
+ rows.push(['Цена объявления',money(p)]);
+ if(scenario==='cashPickup'){rows.push(['Оплата','Наличные']);rows.push(['Получение','Самовывоз']);}
+ if(scenario==='cashDelivery'){rows.push(['Оплата','Наличные']);rows.push(['Получение','Доставка']);rows.push(['Доставка (отдельно)',money(d)]);label='Цена товара';sub='Доставка оплачивается отдельно';}
+ if(scenario==='cashlessPickup'){total=p*1.15;rows.push(['Наценка за безналичную оплату · 15%',money(total-p)]);rows.push(['Оплата','Безналичная']);rows.push(['Получение','Самовывоз']);}
+ if(scenario==='cashlessAvito'){const after15=p*1.15;total=after15*1.11;rows.push(['После наценки 15%',money(after15)]);rows.push(['Дополнительная наценка Авито · 11%',money(total-after15)]);rows.push(['Оплата','Безналичная']);rows.push(['Получение','Авито Доставка']);}
+ $('resultLabel').textContent=label;$('total').textContent=money(total);
+ $('subLabel').textContent=(name?name+' · ':'')+sub;
+ if(scenario==='cashDelivery'&&d>0)rows.push(['Всего с доставкой',money(total+d)]);
+ $('breakdown').innerHTML=rows.map(r=>'<div class="line"><span>'+r[0]+'</span><strong>'+r[1]+'</strong></div>').join('');
+ lastText=['AVITO PRICE BOT',name||'Товар',...rows.map(r=>r[0]+': '+r[1]),label+': '+money(total)].join('\n');
+}
+['product','base','delivery'].forEach(id=>$(id).addEventListener('input',calculate));
+document.querySelectorAll('input[name="scenario"]').forEach(el=>el.addEventListener('change',calculate));
+$('copy').addEventListener('click',async()=>{if(!lastText){$('base').focus();return}try{await navigator.clipboard.writeText(lastText);$('copy').textContent='Скопировано!';setTimeout(()=>$('copy').textContent='Скопировать расчёт',1500)}catch(e){$('copy').textContent='Не удалось скопировать';}});
+$('reset').addEventListener('click',()=>{$('product').value='';$('base').value='';$('delivery').value='';document.querySelector('input[value="cashPickup"]').checked=true;calculate();});
+calculate();
+</script>
+</body>
+</html>
